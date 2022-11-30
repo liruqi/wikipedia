@@ -44,4 +44,5 @@ for name in names:
             
         if d==1:
             os.remove(os.path.join(ERRORDIR, name))
+            os.remove(os.path.join(ERRORDIR, name[-8]+".wikitext"))
 
