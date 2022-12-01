@@ -40,9 +40,16 @@ for name in names:
                 continue
             page.text=ntext
             page.save('Fix wikitable syntax')  # Saves the page
+            wt=os.path.join(ERRORDIR, name[:-8]+".wikitext")
+            if os.path.isfile(wt) and LANG=="zh":
+                with open(wt,"w") as wtf:
+                    wtf.write(ntext)
             d=1
             
         if d==1:
             os.remove(os.path.join(ERRORDIR, name))
-            os.remove(os.path.join(ERRORDIR, name[-8]+".wikitext"))
+            if LANG!="zh":
+                wt=os.path.join(ERRORDIR, name[:-8]+".wikitext")
+                if os.path.isfile(wt):
+                    os.remove(wt)
 
