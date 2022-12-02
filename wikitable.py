@@ -5,6 +5,7 @@
 import pywikibot
 import json
 import os
+import re
 import sys
 
 LANG='zh'
@@ -20,6 +21,7 @@ LANG=sys.argv[1]
 site = pywikibot.Site(LANG, 'wikipedia') 
 BASEDIR="../../wikipedia." + LANG
 ERRORDIR=os.path.join(BASEDIR, "Errors")
+WT_PATTERN=r'{\|(\s*)table'
 names = [f for f in os.listdir(ERRORDIR)]
 cnt=0
 for name in names:
@@ -28,18 +30,20 @@ for name in names:
         d=0
         with open (os.path.join(ERRORDIR, name)) as f:
             err=f.read()
-            if err.find('{|table ') == -1:
+            mo=re.search(WT_PATTERN,err)
+            if mo == None:
                 continue
+            print(mo.group(0))
             print(cnt, "Found:", name[:-8], "->", err)
             page = pywikibot.Page(site, name[:-8])
             ptext=page.text
-            ntext=ptext.replace('{|table ', '{| ')
+            ntext=re.sub(WT_PATTERN, '{|', ptext)
             if ptext == ntext:
                 print("wikitable error not found.")
                 os.remove(os.path.join(ERRORDIR, name))
                 continue
             page.text=ntext
-            page.save('Fix wikitable syntax')  # Saves the page
+            page.save('Fix wikitable beginning syntax')  # Saves the page
             wt=os.path.join(ERRORDIR, name[:-8]+".wikitext")
             if os.path.isfile(wt) and LANG=="zh":
                 with open(wt,"w") as wtf:
