@@ -43,7 +43,7 @@ for name in names:
                 os.remove(os.path.join(ERRORDIR, name))
                 continue
             page.text=ntext
-            page.save('Fix wikitable beginning syntax')  # Saves the page
+            page.save('Fix wikitable beginning syntax, src: https://github.com/liruqi/wikipedia/blob/master/wikitable.py')
             wt=os.path.join(ERRORDIR, name[:-8]+".wikitext")
             if os.path.isfile(wt) and LANG=="zh":
                 with open(wt,"w") as wtf:
