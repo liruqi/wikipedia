@@ -37,7 +37,7 @@ WT_SOURCE_TEXT=r'{| class="wikitable sortable" \4='
 S_PATTERN=WT_BEGIN_PATTERN
 R_TEXT=WT_BEGIN_TEXT
 if action=='style': #TODO: This mode is buggy now
-    S_PATTERN=r'{\|(.*)style=([^=|\!]*)'
+    S_PATTERN=r'{\|(.*)style=([^|\!]*)'
     R_TEXT=None
     debug=True
 elif action[0]=='s':
@@ -59,11 +59,12 @@ def rebuildStyle(t):
         return None
      
     def fixStyle(s):
-        frags=s.replace('"',' ').replace(';',' ').split()
+        frags=s.replace('"',';').split(';')
         attribs=[]
         st=0
         name=""
         for f in frags:
+            f=f.strip()
             if len(f)==0:
                 continue
             if st==2: #value
@@ -73,30 +74,40 @@ def rebuildStyle(t):
                 st=0
                 continue 
             nv=f.split(':')
+            if len(nv)==1:
+                nv=f.split('=')
             if st==1:
-                if f==':':
+                if f==':' or f=='=':
                     st+=1
                 elif len(nv)>1:
-                    attribs.append(name+":"+nv[1])
+                    attribs.append(name.lower()+":"+nv[1])
+                    name=""
                 continue
                     
             if len(nv)==1:
-                name=nv[0]
-                st=1
+                if re.fullmatch('\w+', nv[0]):
+                    name=nv[0].lower()
+                    st=1
             elif nv[1]=='':
-                name=nv[0]
-                st=2
+                if re.fullmatch('\w+', nv[0]):
+                    name=nv[0].lower()
+                    st=2
             else:
                 attribs.append(f)
-        return "; ".join(attribs) 
+        
+        return "; ".join([x for x in attribs if x[:6]!='class:']) 
     
     print('debug:',len(q))
     while q:
         mo = q.pop()
         ss=fixStyle(mo.group(2))
-        print(mo.group(2),'->',ss)
-        others=mo.group(1).strip().strip(";")
-        rep='{| '+others+' style="'+ss+'"' + "\n" 
+        #print(mo.group(2),'->',ss)
+        others=mo.group(1).strip().strip(";").strip("|")
+        rep='{| '+others
+        if len(ss):
+            rep=rep+' style="'+ss+'"' 
+        rep=rep+"\n" 
+        print(mo.group(0),'->',rep)
         t=t[:mo.start()] + rep + t[mo.end():]
     return t
  
@@ -125,7 +136,7 @@ for name in names:
                 continue
             page.text=ntext
             if debug:
-                print (ntext)
+                print ("---DEBUG:", name, "---")
             else:
                 page.save('Fix wikitable ' + action + ' syntax, src: https://github.com/liruqi/wikipedia/blob/master/wikitable.py')
             wt=os.path.join(ERRORDIR, name[:-8]+".wikitext")
