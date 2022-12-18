@@ -53,6 +53,8 @@ def rebuildStyle(t):
         e = mo.end()
         if mo.group(0).count('"') == 2:
             continue
+        if mo.group(0).count('{{') > 0:
+            continue
         q.append(mo)
         print ('String match "%s" at %d:%d' % (t[s:e], s, e))
     if len(q)==0:
@@ -60,19 +62,25 @@ def rebuildStyle(t):
      
     def fixStyle(s):
         frags=s.replace('"',';').split(';')
+        print("frags:", frags)
         attribs=[]
         st=0
-        name=""
-        for f in frags:
-            f=f.strip()
+        attrName=""
+        tableAttr={}
+
+        def updateStyle(f,st,attribs,tableAttr):
+            TableAttrNames=["cellspacing", "cellpadding", "width", "border", "align", "bgcolor", "nowrap"]
+            global attrName
+            print('updateStyle:',f,st,attribs,tableAttr)
             if len(f)==0:
-                continue
+                return (st,attribs,tableAttr)
             if st==2: #value
-                if len(name)==0:
+                if len(attrName)==0:
                     exit(5)
-                attribs.append(name+":"+f)
+                attribs.append(attrName+":"+f)
                 st=0
-                continue 
+                return (st,attribs,tableAttr)
+ 
             nv=f.split(':')
             if len(nv)==1:
                 nv=f.split('=')
@@ -80,30 +88,54 @@ def rebuildStyle(t):
                 if f==':' or f=='=':
                     st+=1
                 elif len(nv)>1:
-                    attribs.append(name.lower()+":"+nv[1])
-                    name=""
-                continue
+                    attribs.append(attrName+":"+nv[1])
+                    attrName=''
+                return (st,attribs,tableAttr)
                     
             if len(nv)==1:
                 if re.fullmatch('\w+', nv[0]):
-                    name=nv[0].lower()
+                    attrName=nv[0].lower()
                     st=1
             elif nv[1]=='':
                 if re.fullmatch('\w+', nv[0]):
-                    name=nv[0].lower()
+                    attrName=nv[0].lower()
                     st=2
             else:
-                attribs.append(f)
+                attrName=nv[0].lower().strip()
+                attrValue=nv[1].lower().strip()
+                #print("nv:",nv)
+                if attrName in TableAttrNames:
+                    if attrValue not in TableAttrNames:
+                        tableAttr[nv[0]]=nv[1]
+                    # else: skip table attrib with empty values
+                elif attrName=='':
+                    return (st,attribs,tableAttr)
+                elif attrName in ['color']:
+                    v=nv[1].strip()
+                    idx=v.find(" ")
+                    if idx==-1: 
+                        attribs.append(attrName+":"+v)
+                    else:
+                        attribs.append(attrName+":"+v[:idx])
+                        return updateStyle(v[idx:],st,attribs,tableAttr)
+                else:
+                    attribs.append(attrName+":"+nv[1])
+            return (st,attribs,tableAttr)
+        for f in frags:
+            f=f.strip()
+            st,attribs,tableAttr = updateStyle(f,st,attribs,tableAttr)
         
-        return "; ".join([x for x in attribs if x[:6]!='class:']) 
+        return ["; ".join([x for x in attribs if x[:6]!='class:']), tableAttr]
     
     print('debug:',len(q))
     while q:
         mo = q.pop()
-        ss=fixStyle(mo.group(2))
-        #print(mo.group(2),'->',ss)
+        ss,tableAttr=fixStyle(mo.group(2))
+        print(mo.group(2),'==>',ss,str(tableAttr))
         others=mo.group(1).strip().strip(";").strip("|")
         rep='{| '+others
+        if tableAttr:
+            rep=rep+' '+ " ".join([ k+'="'+tableAttr[k]+'"' for k in tableAttr])
         if len(ss):
             rep=rep+' style="'+ss+'"' 
         rep=rep+"\n" 
