@@ -69,7 +69,7 @@ def rebuildStyle(t):
         tableAttr={}
 
         def updateStyle(f,st,attribs,tableAttr):
-            TableAttrNames=["cellspacing", "cellpadding", "width", "border", "align", "bgcolor", "nowrap"]
+            TableAttrNames=["cellspacing", "cellpadding", "class", "border", "align", "bgcolor", "nowrap"]
             global attrName
             print('updateStyle:',f,st,attribs,tableAttr)
             if len(f)==0:
@@ -77,7 +77,10 @@ def rebuildStyle(t):
             if st==2: #value
                 if len(attrName)==0:
                     exit(5)
-                attribs.append(attrName+":"+f)
+                if attrName in TableAttrNames:
+                    tableAttr[attrName]=f
+                else:
+                    attribs.append(attrName+":"+f)
                 st=0
                 return (st,attribs,tableAttr)
  
@@ -125,7 +128,7 @@ def rebuildStyle(t):
             f=f.strip()
             st,attribs,tableAttr = updateStyle(f,st,attribs,tableAttr)
         
-        return ["; ".join([x for x in attribs if x[:6]!='class:']), tableAttr]
+        return ["; ".join(attribs), tableAttr]
     
     print('debug:',len(q))
     while q:
