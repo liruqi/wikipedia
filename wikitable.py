@@ -36,10 +36,10 @@ WT_SOURCE_TEXT=r'{| class="wikitable sortable" \4='
 
 S_PATTERN=WT_BEGIN_PATTERN
 R_TEXT=WT_BEGIN_TEXT
-if action=='style': #TODO: This mode is buggy now
+if action=='style':
     S_PATTERN=r'{\|(.*)style=([^|\!]*)'
     R_TEXT=None
-    debug=True
+    debug=False
 elif action[0]=='s':
     S_PATTERN=WT_SOURCE_PATTERN
     R_TEXT=WT_SOURCE_TEXT
@@ -55,13 +55,15 @@ def rebuildStyle(t):
             continue
         if mo.group(0).count('{{') > 0:
             continue
+        if q and s<q[-1].end()+6: #probably got more 1 style=xxx in a line 
+            q.pop()
         q.append(mo)
         print ('String match "%s" at %d:%d' % (t[s:e], s, e))
     if len(q)==0:
         return None
      
     def fixStyle(s):
-        frags=s.replace('"',';').split(';')
+        frags=s.replace('"',';').replace('\'',';').split(';')
         print("frags:", frags)
         attribs=[]
         st=0
@@ -135,6 +137,8 @@ def rebuildStyle(t):
         mo = q.pop()
         ss,tableAttr=fixStyle(mo.group(2))
         print(mo.group(2),'==>',ss,str(tableAttr))
+        if "align" in tableAttr and tableAttr['align'].strip()=='left':
+            del tableAttr['align']
         others=mo.group(1).strip().strip(";").strip("|")
         rep='{| '+others
         if tableAttr:
