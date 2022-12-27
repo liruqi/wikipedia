@@ -71,7 +71,7 @@ def rebuildStyle(t):
         tableAttr={}
 
         def updateStyle(f,st,attribs,tableAttr):
-            TableAttrNames=["cellspacing", "cellpadding", "class", "border", "align", "bgcolor", "nowrap"]
+            TableAttrNames=["cellspacing", "cellpadding", "class", "align", "bgcolor", "nowrap"]
             global attrName
             print('updateStyle:',f,st,attribs,tableAttr)
             if len(f)==0:
@@ -177,7 +177,7 @@ for name in names:
             if debug:
                 print ("---DEBUG:", name, "---")
             else:
-                page.save('Fix wikitable ' + action + ' syntax, src: https://github.com/liruqi/wikipedia/blob/master/wikitable.py')
+                page.save('Fix ' + LANG + ' wikitable ' + action + ' syntax, src: https://github.com/liruqi/wikipedia/blob/master/wikitable.py')
             wt=os.path.join(ERRORDIR, name[:-8]+".wikitext")
             if os.path.isfile(wt) and LANG=="zh":
                 with open(wt,"w") as wtf:
