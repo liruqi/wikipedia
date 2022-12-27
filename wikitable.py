@@ -137,8 +137,6 @@ def rebuildStyle(t):
         mo = q.pop()
         ss,tableAttr=fixStyle(mo.group(2))
         print(mo.group(2),'==>',ss,str(tableAttr))
-        if "align" in tableAttr and tableAttr['align'].strip()=='left':
-            del tableAttr['align']
         others=mo.group(1).strip().strip(";").strip("|")
         rep='{| '+others
         if tableAttr:
@@ -177,7 +175,7 @@ for name in names:
             if debug:
                 print ("---DEBUG:", name, "---")
             else:
-                page.save('Fix ' + LANG + ' wikitable ' + action + ' syntax, src: https://github.com/liruqi/wikipedia/blob/master/wikitable.py')
+                page.save('Fix ' + LANG + ' wikitable ' + action + ' syntax, src: https://github.com/liruqi/wikipedia/blob/master/wikitable.py', minor=True)
             wt=os.path.join(ERRORDIR, name[:-8]+".wikitext")
             if os.path.isfile(wt) and LANG=="zh":
                 with open(wt,"w") as wtf:
