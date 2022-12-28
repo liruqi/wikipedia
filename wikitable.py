@@ -81,7 +81,7 @@ def rebuildStyle(t):
                     exit(5)
                 if attrName in TableAttrNames:
                     tableAttr[attrName]=f
-                else:
+                elif attrName!="style":
                     attribs.append(attrName+":"+f)
                 st=0
                 return (st,attribs,tableAttr)
@@ -110,11 +110,13 @@ def rebuildStyle(t):
                 attrValue=nv[1].lower().strip()
                 #print("nv:",nv)
                 if attrName in TableAttrNames:
+                    # skip table attrib with empty values
                     if attrValue not in TableAttrNames:
                         tableAttr[nv[0]]=nv[1]
-                    # else: skip table attrib with empty values
                 elif attrName=='':
                     return (st,attribs,tableAttr)
+                elif attrName=='style':
+                    return updateStyle(attrValue,st,attribs,tableAttr)
                 elif attrName in ['color']:
                     v=nv[1].strip()
                     idx=v.find(" ")
@@ -175,7 +177,7 @@ for name in names:
             if debug:
                 print ("---DEBUG:", name, "---")
             else:
-                page.save('Fix ' + LANG + ' wikitable ' + action + ' syntax, src: https://github.com/liruqi/wikipedia/blob/master/wikitable.py', minor=True)
+                page.save('Fix ' + LANG + ' wikitable ' + action + ' syntax, [[User:Liruqi/wikitable]]', minor=True)
             wt=os.path.join(ERRORDIR, name[:-8]+".wikitext")
             if os.path.isfile(wt) and LANG=="zh":
                 with open(wt,"w") as wtf:
