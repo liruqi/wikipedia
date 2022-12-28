@@ -110,8 +110,7 @@ def rebuildStyle(t):
                 attrValue=nv[1].lower().strip()
                 #print("nv:",nv)
                 if attrName in TableAttrNames:
-                    # skip table attrib with empty values
-                    if attrValue not in TableAttrNames:
+                    if attrName!="align" and (attrValue not in TableAttrNames):
                         tableAttr[nv[0]]=nv[1]
                 elif attrName=='':
                     return (st,attribs,tableAttr)
