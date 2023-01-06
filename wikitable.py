@@ -8,7 +8,9 @@ import os
 import re
 import sys
 
+VERSION="1.0"
 LANG='zh'
+MAXEDIT=3
 if len(sys.argv) == 1:
     site = pywikibot.Site('zh', 'wikipedia')  # The site we want to run our bot on
     page = pywikibot.Page(site, '镇江南站')
@@ -37,15 +39,19 @@ WT_SOURCE_TEXT=r'{| class="wikitable sortable" \4='
 S_PATTERN=WT_BEGIN_PATTERN
 R_TEXT=WT_BEGIN_TEXT
 if action=='style':
-    S_PATTERN=r'{\|(.*)style=([^|\!]*)'
+    S_PATTERN=r'{\|(.*)style=([^|\!\n]*)'
     R_TEXT=None
-    debug=False
+elif action=='stylewithverticalbar':
+    S_PATTERN=r'{\|(.*)style=([^|\!\n]*)\|\n'
+    R_TEXT=None
+    debug=True
+    names=['美國白人.err.log']
 elif action[0]=='s':
     S_PATTERN=WT_SOURCE_PATTERN
     R_TEXT=WT_SOURCE_TEXT
 
 def rebuildStyle(t):
-    if action != 'style':
+    if action[:5] != 'style':
         return None
     q=[]
     for mo in re.finditer(S_PATTERN,t):
@@ -131,6 +137,8 @@ def rebuildStyle(t):
             f=f.strip()
             st,attribs,tableAttr = updateStyle(f,st,attribs,tableAttr)
         
+        # avoid "background: #f6e39c": https://en.wikipedia.org/w/index.php?title=8th_Platino_Awards&diff=1131550269&oldid=1131549277&diffmode=source
+        attribs = [x for x in attribs if x!="background: #f6e39c"]
         return ["; ".join(attribs), tableAttr]
     
     print('debug:',len(q))
@@ -139,7 +147,7 @@ def rebuildStyle(t):
         ss,tableAttr=fixStyle(mo.group(2))
         print(mo.group(2),'==>',ss,str(tableAttr))
         others=mo.group(1).strip().strip(";").strip("|")
-        rep='{| '+others
+        rep='{| '+others.strip()
         if tableAttr:
             rep=rep+' '+ " ".join([ k+'="'+tableAttr[k]+'"' for k in tableAttr])
         if len(ss):
@@ -152,6 +160,8 @@ def rebuildStyle(t):
 for name in names:
     if name[-8:] == ".err.log":
         cnt+=1
+        if cnt > MAXEDIT:
+            break
         d=0
         with open (os.path.join(ERRORDIR, name)) as f:
             err=f.read()
@@ -162,7 +172,7 @@ for name in names:
             print(cnt, "Found:", name[:-8], "->", err)
             page = pywikibot.Page(site, name[:-8])
             ptext=page.text
-            if action=='style':
+            if action[:5]=='style':
                 ntext=rebuildStyle(ptext)
                 if ntext==None:
                     continue
@@ -174,14 +184,15 @@ for name in names:
                 continue
             page.text=ntext
             if debug:
-                print ("---DEBUG:", name, "---")
+                print ("---DEBUG:", name, "---\n", ntext)
+                exit(6)
             else:
-                page.save('Fix ' + LANG + ' wikitable ' + action + ' syntax, [[User:Liruqi/wikitable]]', minor=True)
+                page.save('Fix ' + LANG + ' wikitable ' + action + ' syntax, [[User:Liruqi/wikitable]] v' + VERSION, minor=True)
+                d=1
             wt=os.path.join(ERRORDIR, name[:-8]+".wikitext")
             if os.path.isfile(wt) and LANG=="zh":
                 with open(wt,"w") as wtf:
                     wtf.write(ntext)
-            d=1
             
         if d==1:
             os.remove(os.path.join(ERRORDIR, name))
