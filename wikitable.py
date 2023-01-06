@@ -8,7 +8,7 @@ import os
 import re
 import sys
 
-VERSION="1.1"
+VERSION="1.2"
 LANG='zh'
 MAXEDIT=3
 if len(sys.argv) == 1:
@@ -146,14 +146,15 @@ def rebuildStyle(t):
     print('debug:',len(q))
     while q:
         mo = q.pop()
-        ss,tableAttr=fixStyle(mo.group(2))
-        print(mo.group(2),'==>',ss,str(tableAttr))
         others=mo.group(1).strip().strip(";").strip("|")
         rep='{| '+others.strip()
-        if tableAttr:
-            rep=rep+' '+ " ".join([ k+'="'+tableAttr[k]+'"' for k in tableAttr])
-        if len(ss):
-            rep=rep+' style="'+ss+'"' 
+        if others.find("style=") == -1:
+            ss,tableAttr=fixStyle(mo.group(2))
+            print(mo.group(2),'==>',ss,str(tableAttr))
+            if tableAttr:
+                rep=rep+' '+ " ".join([ k+'="'+tableAttr[k]+'"' for k in tableAttr])
+            if len(ss):
+                rep=rep+' style="'+ss+'"' 
         rep=rep+"\n" 
         print(mo.group(0),'->',rep)
         t=t[:mo.start()] + rep + t[mo.end():]
