@@ -169,7 +169,7 @@ for name in names:
             if mo == None:
                 continue
             if action=='style':
-                if re.search(S_PATTERN,err) != None:
+                if re.search(WT_VB_PATTERN,err) != None:
                     continue 
             cnt+=1
             if cnt > MAXEDIT:
