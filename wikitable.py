@@ -8,7 +8,7 @@ import os
 import re
 import sys
 
-VERSION="1.0"
+VERSION="1.1"
 LANG='zh'
 MAXEDIT=3
 if len(sys.argv) == 1:
@@ -36,16 +36,18 @@ WT_BEGIN_TEXT='{|'
 WT_SOURCE_PATTERN=r'{\|(\s*)class\=wikitable(\s*)sortable(\s*)(\w+)='
 WT_SOURCE_TEXT=r'{| class="wikitable sortable" \4='
 
+WT_VB_PATTERN=r'{\|(.*)style=([^|\!\n]*)\|\n'
+
 S_PATTERN=WT_BEGIN_PATTERN
 R_TEXT=WT_BEGIN_TEXT
 if action=='style':
     S_PATTERN=r'{\|(.*)style=([^|\!\n]*)'
     R_TEXT=None
 elif action=='stylewithverticalbar':
-    S_PATTERN=r'{\|(.*)style=([^|\!\n]*)\|\n'
+    S_PATTERN=WT_VB_PATTERN
     R_TEXT=None
-    debug=True
-    names=['美國白人.err.log']
+    #debug=True
+    #names=['美國白人.err.log']
 elif action[0]=='s':
     S_PATTERN=WT_SOURCE_PATTERN
     R_TEXT=WT_SOURCE_TEXT
@@ -159,15 +161,19 @@ def rebuildStyle(t):
  
 for name in names:
     if name[-8:] == ".err.log":
-        cnt+=1
-        if cnt > MAXEDIT:
-            break
+        
         d=0
         with open (os.path.join(ERRORDIR, name)) as f:
             err=f.read()
             mo=re.search(S_PATTERN,err)
             if mo == None:
                 continue
+            if action=='style':
+                if re.search(S_PATTERN,err) != None:
+                    continue 
+            cnt+=1
+            if cnt > MAXEDIT:
+                break
             print(mo.group(0))
             print(cnt, "Found:", name[:-8], "->", err)
             page = pywikibot.Page(site, name[:-8])
