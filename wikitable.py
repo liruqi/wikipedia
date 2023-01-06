@@ -41,7 +41,7 @@ WT_VB_PATTERN=r'{\|(.*)style=([^|\!\n]*)\|\n'
 S_PATTERN=WT_BEGIN_PATTERN
 R_TEXT=WT_BEGIN_TEXT
 if action=='style':
-    S_PATTERN=r'{\|(.*)style=([^|\!\n]*)'
+    S_PATTERN=r'{\|(.*)style=([^|\!\n]*)\n'
     R_TEXT=None
 elif action=='stylewithverticalbar':
     S_PATTERN=WT_VB_PATTERN
