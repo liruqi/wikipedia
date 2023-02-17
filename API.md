@@ -1,4 +1,4 @@
-#Wikipedia API
+# Wikipedia API
 
 ## 多语言
 https://zh.m.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&meta=languageinfo&liprop=variantnames&licode=zh&prop=langlinks&lllimit=max&titles=%E6%98%9F%E9%99%85%E4%BA%89%E9%9C%B8II%EF%BC%9A%E8%99%9A%E7%A9%BA%E4%B9%8B%E9%81%97&llprop=url%7Cautonym%7Clangname&llinlanguagecode=zh
