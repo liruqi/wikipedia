@@ -5,28 +5,17 @@ https://zh.m.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&me
 
 GET 参数：
 ```
-action: 
-query
-format: 
-json
-formatversion: 
-2
-meta: 
-languageinfo
-liprop: 
-variantnames
-licode: 
-zh
-prop: 
-langlinks
-lllimit: 
-max
-titles: 
-星际争霸II：虚空之遗
-llprop: 
-url|autonym|langname
-llinlanguagecode: 
-zh
+action: query
+format: json
+formatversion: 2
+meta: languageinfo
+liprop: variantnames
+licode: zh
+prop: langlinks
+lllimit: max
+titles: 星际争霸II：虚空之遗
+llprop: url|autonym|langname
+llinlanguagecode: zh
 ```
 
 返回：
