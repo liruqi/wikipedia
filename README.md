@@ -1,21 +1,17 @@
 # wikipedia
 
-This repo contains my scripts to fix syntax issues on wikipedia.org.
+This repo contains my script to fix syntax issues on wikipedia.org. You could modify or use it at your own risk.
+
+You may need to get a Wikipedia account, and clone some data repo to run this script. Some possible wikitext syntax issues on Wikipedia are listed here: [en](https://github.com/chinapedia/wikipedia.en/tree/main/Errors), [zh](https://github.com/chinapedia/wikipedia.zh/tree/master/Errors), [ja](https://github.com/chinapedia/wikipedia.ja/tree/master/Errors), [ko](https://github.com/chinapedia/wikipedia.ko/tree/master/Errors).
 
 ## Contributions
 
-### wikitable beginning syntax
+### wikitable syntax
 
-* 2022/11/30, 368 items fixed on [en.wikipedia.org](https://en.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=500)
+* 7k+ items fixed on [en.wikipedia.org](https://en.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=500)
 
-* 2022/11/30, 158 items fixed on [ja.wikipedia.org](https://ja.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=500)
+* 3.8k items fixed on [zh.wikipedia.org](https://zh.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=500)
 
-* 2022/12/01, 182 items fixed on [ko.wikipedia.org](https://ko.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=250)
+* 1.1k items fixed on [ja.wikipedia.org](https://ja.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=500)
 
-* 2022/12/02, 2272 items fixed on [zh.wikipedia.org](https://zh.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=500)
-
-* 2022/12/02, 313 items fixed on [en.wikipedia.org](https://en.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=500)
-
-### wikitable style syntax
-
-* 2022/12/20, 387 items fixed on [zh.wikipedia.org](https://zh.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=500)
+* 400+ items fixed on [ko.wikipedia.org](https://ko.wikipedia.org/w/index.php?title=Special:Contributions/Liruqi&target=Liruqi&offset=&limit=250)
